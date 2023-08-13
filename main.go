@@ -20,10 +20,12 @@ import (
 var config *models.Config
 
 func main() {
+
 	config = readConfig()
 	r := mux.NewRouter()
 	r.PathPrefix("/statics/").Handler(http.FileServer(http.Dir(".")))
-	r.HandleFunc("/generate", generate)
+	r.HandleFunc("/generate", generate).Methods("POST")
+	r.HandleFunc("/verify", verify).Methods("GET")
 	r.HandleFunc("/", index)
 	fmt.Printf("http://localhost:%s", config.Port)
 	http.ListenAndServe(":"+config.Port, r)
@@ -76,4 +78,8 @@ func generate(w http.ResponseWriter, r *http.Request) {
 		Secret:  secret,
 		DataURI: dataURI,
 	})
+}
+
+func verify(w http.ResponseWriter, r *http.Request) {
+
 }

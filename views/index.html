@@ -17,8 +17,33 @@
             margin: 0;
         }
 
-        .page-title {
-            text-align: center;
+        body {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100svh;
+        }
+
+        .mdc-top-app-bar {
+            z-index: 3;
+            box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
+        }
+
+        .main-wrapper {
+            max-width: 500px;
+            height: calc(100vh - 64px);
+            height: calc(100svh - 64px);
+            margin: auto;
+            overflow: auto;
+        }
+
+        @media screen and (max-width: 600px) {
+            .main-wrapper {
+                max-width: 100%;
+                width: 100%;
+                height: calc(100vh - 56px);
+                height: calc(100svh - 56px);
+            }
         }
 
         .form {
@@ -45,18 +70,73 @@
             text-align: center;
         }
 
-        #btnGenerate{
+        #btnGenerate {
             width: calc(100% - 32px) !important;
             height: 3.25rem;
             font-size: 1.5rem;
+        }
+
+        @media screen and (max-width: 600px) {
+            #btnGenerate {
+                font-size: 1.25rem;
+            }
         }
 
         .instruction {
             width: calc(100% - 32px) !important;
             font-family: var(--mdc-typography-subtitle1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
             font-size: 1.25rem;
-            color:dimgrey;
-            margin: 15px 15px 15px 15px !important;
+            color: dimgrey;
+            margin: 15px 15px 0px 15px !important;
+        }
+
+        .drawer {
+            position: absolute;
+            top: 56px;
+            left: 0px;
+            width: 240px;
+            height: calc(100% - 56px);
+            background-color: var(--mdc-theme-primary, #6200ee);
+            box-shadow: 5px 0px 5px rgba(0, 0, 0, 0.25);
+            transition: all 0.5s ease-out;
+        }
+
+        @media screen and (max-width: 600px) {
+            .drawer {
+                top: 56px;
+                height: calc(100% - 56px);
+            }
+        }
+
+        .hidden {
+            left: -240px;
+            transition: all 0.5s ease-out;
+        }
+
+        .drawer-item-wrapper {
+            position: relative;
+            width: 100%;
+            height: 3rem;
+            border-bottom: 1px solid dimgray;
+        }
+
+        .drawer-item{
+            text-align: center;
+            font-family: var(--mdc-typography-subtitle1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .v-center {
+            position: relative;
+            top: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+            width: 100%;
+            max-height: 100%;
+            padding: 0px;
+            margin: 0;
+            overflow: auto;
         }
     </style>
 </head>
@@ -65,70 +145,85 @@
     <header class="mdc-top-app-bar" data-mdc-auto-init="MDCTopAppBar">
         <div class="mdc-top-app-bar__row">
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button mdc-button"
-                    aria-label="Open navigation menu">
+                <button id="btnDrawer"
+                    class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button mdc-button"
+                    aria-label="Open navigation menu" onclick="toggleDrawer()">
                     <span class="mdc-button__ripple"></span>
                     menu
                 </button>
                 <span class="mdc-top-app-bar__title">TOTP Generator</span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                
+
             </section>
         </div>
     </header>
     <main class="mdc-top-app-bar--fixed-adjust">
-        <form id="frmTotp" 
-            class="form"
-            action="/generate"
-            method="post"
-            enctype="multipart/form-data">
-            <label id="txtIssue" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__notch">
-                        <span id="lblIssuer" class="mdc-floating-label">Issuer</span>
+        <div class="main-wrapper" onclick="closeDrawer()">
+            <form id="frmTotp" class="form" action="/generate" method="post" enctype="multipart/form-data">
+                <br />
+                <br />
+                <label id="txtIssue" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblIssuer" class="mdc-floating-label">Issuer</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
                     </span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <input name="Issuer" type="text" class="mdc-text-field__input" aria-labelledby="lblIssuer" required
-                    maxlength="100">
-            </label>
-            <div class="hint-wrapper">
-                <label class="lbl-hint">(E.g. company name)</label>
-            </div>
-            <label id="txtEmail" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__notch">
-                        <span id="lblEmail" class="mdc-floating-label">Email</span>
-                    </span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <input name="Email" type="email" class="mdc-text-field__input" aria-labelledby="lblEmail" required>
-            </label>
-            <div class="hint-wrapper">
-                <label class="lbl-hint">(E.g. user@company-name.com)</label>
-            </div>
-            <div class="btn-wrapper">
-                <div class="mdc-touch-target-wrapper">
-                    <button id="btnGenerate" 
-                        class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">Generate QR Code</span>
-                    </button>
+                    <input name="Issuer" type="text" class="mdc-text-field__input" aria-labelledby="lblIssuer" required
+                        maxlength="100">
+                </label>
+                <div class="hint-wrapper">
+                    <label class="lbl-hint">(E.g. company name)</label>
                 </div>
+                <label id="txtEmail" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblEmail" class="mdc-floating-label">Email</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input name="Email" type="email" class="mdc-text-field__input" aria-labelledby="lblEmail" required>
+                </label>
+                <div class="hint-wrapper">
+                    <label class="lbl-hint">(E.g. user@company-name.com)</label>
+                </div>
+                <div class="btn-wrapper">
+                    <div class="mdc-touch-target-wrapper">
+                        <button id="btnGenerate" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Generate QR Code</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="instruction">
+                This TOTP generator is compatible with
+                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=zh_TW&gl=US&pli=1"
+                    target="_blank">Google Authenticator (Google Play)</a>.
+                Scan the generated QR code with Google Authenticator app in order to save your secret code in your
+                mobile device.
             </div>
-        </form>
-        <div class="instruction">
-            This TOTP generator is compatible with 
-            <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=zh_TW&gl=US&pli=1"
-                target="_blank">Google Authenticator (Google Play)</a>.
-            Scan the generated QR code with Google Authenticator app in order to save your secret code in your mobile device.
         </div>
     </main>
 
+    <div id="drawer" class="drawer hidden">
+        <br />
+        <div class="drawer-item-wrapper">
+            <div class="drawer-item v-center">Test TOTP</div>
+        </div>
+        <div class="drawer-item-wrapper">
+            <div class="drawer-item v-center">Verify URL</div>
+        </div>
+    </div>
+
     <script>
+        /** @type {HTMLButtonElement} */
+        const btnDrawer = document.getElementById("btnDrawer")
+        /** @type {HTMLDivElement} */
+        const drawer = document.getElementById("drawer")
         window.addEventListener("DOMContentLoaded", function () {
             mdcAutoInit();
         });
@@ -136,6 +231,13 @@
             mdc.autoInit();
             //new MDCTopAppBar(document.querySelector('.mdc-top-app-bar'));
         }
+        function toggleDrawer() {
+            drawer.classList.toggle("hidden")
+        }
+        function closeDrawer() {
+            drawer.classList.add("hidden");
+        }
+
     </script>
 </body>
 
