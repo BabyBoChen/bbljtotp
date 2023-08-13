@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BBLJ TOTP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+        href="/statics/libs/material-components-web/unpkg.com_material-components-web@14.0.0_dist_material-components-web.min.css"
+        rel="stylesheet">
+    <script
+        src="/statics/libs/material-components-web/unpkg.com_material-components-web@14.0.0_dist_material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        * {
+            margin: 0;
+        }
+        
+        .main-wrapper {
+            width: 100%;
+            overflow: auto;
+        }
+
+        .qrcode-wrapper{
+            width: calc(100% - 32px) !important;
+            text-align: center;
+            margin: 15px 15px 0px 15px !important;
+        }
+
+        .mdc-text-field{
+            width: calc(100% - 32px) !important;
+            margin: 15px 15px 0px 15px !important;
+        }
+
+        .instruction {            
+            font-family: var(--mdc-typography-subtitle1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+            font-size: 1.25rem;
+            color:dimgrey;
+            margin-top: 15px !important;
+            margin-right: 15px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="mdc-top-app-bar" data-mdc-auto-init="MDCTopAppBar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="/">
+                    <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button mdc-button"
+                        aria-label="Open navigation menu">
+                        <span class="mdc-button__ripple"></span>
+                        arrow_back
+                    </button>
+                </a>
+
+                <span class="mdc-top-app-bar__title">TOTP QR Code</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+
+            </section>
+        </div>
+    </header>
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="main-wrapper">
+            <div class="qrcode-wrapper">
+                <img src="{{.DataURI}}" />    
+            </div>
+            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
+                data-mdc-auto-init="MDCTextField">
+                <span class="mdc-notched-outline">
+                    <span class="mdc-notched-outline__leading"></span>
+                    <span class="mdc-notched-outline__notch">
+                        <span id="lblSecret" class="mdc-floating-label">Secret</span>
+                    </span>
+                    <span class="mdc-notched-outline__trailing"></span>
+                </span>
+                <span class="mdc-text-field__resizer">
+                    <textarea class="mdc-text-field__input" 
+                        rows="2" 
+                        cols="20" 
+                        aria-label="Label" 
+                        aria-labelledby="lblSecret" 
+                        name="Secret"
+                        readonly>{{.Secret}}</textarea>
+                </span>
+            </label>
+            <ol class="instruction">
+                <li>For user, scan this QR code with Google Authenticator app.</li>
+                <li>For company administrator, save the Secret into your database in order to verify user's TOTP later.</li>
+                <li>Verify user's TOTP using this api url:</li>
+            </ol>
+            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
+                data-mdc-auto-init="MDCTextField">
+                <span class="mdc-notched-outline">
+                    <span class="mdc-notched-outline__leading"></span>
+                    <span class="mdc-notched-outline__trailing"></span>
+                </span>
+                <span class="mdc-text-field__resizer">
+                    <textarea class="mdc-text-field__input" 
+                        rows="4" 
+                        cols="20" 
+                        aria-label="Label" 
+                        aria-labelledby="lblApiUrl" 
+                        name="ApiUrl"
+                        readonly></textarea>
+                </span>
+            </label>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            mdcAutoInit();
+            generateVerifyUrl();
+        });
+        function mdcAutoInit() {
+            mdc.autoInit();
+            //new MDCTopAppBar(document.querySelector('.mdc-top-app-bar'));
+        }
+        function generateVerifyUrl(){
+            let domain = window.location.hostname;
+            /** @type {HTMLTextAreaElement} */
+            let txtSecret = document.querySelector("textarea[name='Secret']");
+            let secret = encodeURIComponent(txtSecret.value).replace(/\./g, '%2E');
+            /** @type {HTMLTextAreaElement} */
+            let apiUrl = document.querySelector("textarea[name='ApiUrl']");
+            apiUrl.value = `https://${domain}/verify?secret=${secret}&totp={6 digits TOTP}`;
+        }
+    </script>
+</body>
+
+</html>
