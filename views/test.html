@@ -58,55 +58,58 @@
         </div>
     </header>
     <main class="mdc-top-app-bar--fixed-adjust">
-        <form class="main-wrapper" action="/verify" method="get">
+        <div class="main-wrapper">
+            <form class="break600w" action="/verify" method="get">
 
-            <br />
-            <br />
+                <br />
+                <br />
 
-            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
-                data-mdc-auto-init="MDCTextField">
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__notch">
-                        <span id="lblSecret" class="mdc-floating-label">Secret</span>
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
+                    data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblSecret" class="mdc-floating-label">Secret</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
                     </span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <span class="mdc-text-field__resizer">
-                    <textarea class="mdc-text-field__input" rows="2" cols="20" aria-label="Label"
-                        aria-labelledby="lblSecret" name="secret" required></textarea>
-                </span>
-            </label>
-
-            <div class="hint-wrapper">
-                <label class="lbl-hint">(E.g. JBSWY3DPEHPK3PXP)</label>
-            </div>
-
-            <label id="txtPasscode" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__notch">
-                        <span id="lblPasscode" class="mdc-floating-label">Passcode</span>
+                    <span class="mdc-text-field__resizer">
+                        <textarea class="mdc-text-field__input" rows="2" cols="20" aria-label="Label"
+                            aria-labelledby="lblSecret" name="secret" required></textarea>
                     </span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <input name="totp" type="text" class="mdc-text-field__input" aria-labelledby="lblPasscode" maxlength="6"
-                    required>
-            </label>
-            <div class="hint-wrapper">
-                <label class="lbl-hint">(E.g. 6-digits passcode)</label>
-            </div>
+                </label>
 
-            <div class="btn-wrapper">
-                <div class="mdc-touch-target-wrapper">
-                    <button id="btnVerify" class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">Verify</span>
-                    </button>
+                <div class="hint-wrapper">
+                    <label class="lbl-hint">(E.g. JBSWY3DPEHPK3PXP)</label>
                 </div>
-            </div>
 
-        </form>
+                <label id="txtPasscode" class="mdc-text-field mdc-text-field--outlined"
+                    data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblPasscode" class="mdc-floating-label">Passcode</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input name="totp" type="text" class="mdc-text-field__input" aria-labelledby="lblPasscode"
+                        maxlength="6" required>
+                </label>
+                <div class="hint-wrapper">
+                    <label class="lbl-hint">(E.g. 6-digits passcode)</label>
+                </div>
+
+                <div class="btn-wrapper">
+                    <div class="mdc-touch-target-wrapper">
+                        <button id="btnVerify" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Verify</span>
+                        </button>
+                    </div>
+                </div>
+                <br/>
+            </form>
+        </div>
 
     </main>
     <script>

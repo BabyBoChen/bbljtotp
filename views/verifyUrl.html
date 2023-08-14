@@ -59,44 +59,36 @@
     </header>
     <main class="mdc-top-app-bar--fixed-adjust">
         <div class="main-wrapper">
-
-            <br />
-            <br />
-
-            <div class="instruction">
-                Verify users' TOTP with the following URL and with proper query parameters:
-            </div>
-
-            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
-                data-mdc-auto-init="MDCTextField">
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <span class="mdc-text-field__resizer">
-                    <textarea name="URL" 
-                        class="mdc-text-field__input" 
-                        rows="2" 
-                        cols="20" 
-                        aria-label="Label"
-                        aria-labelledby="lblURL" 
-                        readonly></textarea>
-                </span>
-            </label>
-
-            <div class="btn-wrapper">
-                <div class="mdc-touch-target-wrapper">
-                    <button id="btnVerify" 
-                        class="mdc-button mdc-button--raised"
-                        onclick="copyUrl()">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">Copy URL</span>
-                    </button>
+            <div class="break600w">
+                <br />
+                <br />
+                <div class="instruction">
+                    Verify users' TOTP with the following URL and with proper query parameters:
                 </div>
+
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
+                    data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <span class="mdc-text-field__resizer">
+                        <textarea name="URL" class="mdc-text-field__input" rows="2" cols="20" aria-label="Label"
+                            aria-labelledby="lblURL" readonly></textarea>
+                    </span>
+                </label>
+
+                <div class="btn-wrapper">
+                    <div class="mdc-touch-target-wrapper">
+                        <button id="btnVerify" class="mdc-button mdc-button--raised" onclick="copyUrl()">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Copy URL</span>
+                        </button>
+                    </div>
+                </div>
+                <br/>
             </div>
-
-            </form>
-
+        </div>
     </main>
     <script>
         window.addEventListener("DOMContentLoaded", function () {
@@ -109,17 +101,17 @@
         function generateVerifyUrl() {
             let domain = window.location.hostname;
             let port = window.location.port;
-            if(port && port != "80"){
+            if (port && port != "80") {
                 domain += ":" + port;
             }
             /** @type {HTMLTextAreaElement} */
             let txtURL = document.querySelector("textarea[name='URL']");
             txtURL.value = `https://${domain}/verify?secret=\${secret}&totp=\${6-digits-passcode}`;
         }
-        function copyUrl(){
+        function copyUrl() {
             /** @type {HTMLTextAreaElement} */
             let txtURL = document.querySelector("textarea[name='URL']");
-            const listener = function(ev) {
+            const listener = function (ev) {
                 ev.preventDefault();
                 ev.clipboardData.setData('text/html', txtURL.value);
                 ev.clipboardData.setData('text/plain', txtURL.value);

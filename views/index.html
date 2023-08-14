@@ -102,51 +102,57 @@
     </header>
     <main class="mdc-top-app-bar--fixed-adjust">
         <div class="main-wrapper" onclick="closeDrawer()">
-            <form id="frmTotp" class="form" action="/generate" method="post" enctype="multipart/form-data">
-                <br />
-                <br />
-                <label id="txtIssue" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
-                    <span class="mdc-notched-outline">
-                        <span class="mdc-notched-outline__leading"></span>
-                        <span class="mdc-notched-outline__notch">
-                            <span id="lblIssuer" class="mdc-floating-label">Issuer</span>
+            <div class="break600w">
+                <form id="frmTotp" class="form" action="/generate" method="post" enctype="multipart/form-data">
+                    <br />
+                    <br />
+                    <label id="txtIssue" class="mdc-text-field mdc-text-field--outlined"
+                        data-mdc-auto-init="MDCTextField">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span id="lblIssuer" class="mdc-floating-label">Issuer</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
                         </span>
-                        <span class="mdc-notched-outline__trailing"></span>
-                    </span>
-                    <input name="Issuer" type="text" class="mdc-text-field__input" aria-labelledby="lblIssuer" required
-                        maxlength="100">
-                </label>
-                <div class="hint-wrapper">
-                    <label class="lbl-hint">(E.g. company name)</label>
-                </div>
-                <label id="txtEmail" class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
-                    <span class="mdc-notched-outline">
-                        <span class="mdc-notched-outline__leading"></span>
-                        <span class="mdc-notched-outline__notch">
-                            <span id="lblEmail" class="mdc-floating-label">Email</span>
-                        </span>
-                        <span class="mdc-notched-outline__trailing"></span>
-                    </span>
-                    <input name="Email" type="email" class="mdc-text-field__input" aria-labelledby="lblEmail" required>
-                </label>
-                <div class="hint-wrapper">
-                    <label class="lbl-hint">(E.g. user@company-name.com)</label>
-                </div>
-                <div class="btn-wrapper">
-                    <div class="mdc-touch-target-wrapper">
-                        <button id="btnGenerate" class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__ripple"></span>
-                            <span class="mdc-button__label">Generate QR Code</span>
-                        </button>
+                        <input name="Issuer" type="text" class="mdc-text-field__input" aria-labelledby="lblIssuer"
+                            required maxlength="100">
+                    </label>
+                    <div class="hint-wrapper">
+                        <label class="lbl-hint">(E.g. company name)</label>
                     </div>
+                    <label id="txtEmail" class="mdc-text-field mdc-text-field--outlined"
+                        data-mdc-auto-init="MDCTextField">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span id="lblEmail" class="mdc-floating-label">Email</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input name="Email" type="email" class="mdc-text-field__input" aria-labelledby="lblEmail"
+                            required>
+                    </label>
+                    <div class="hint-wrapper">
+                        <label class="lbl-hint">(E.g. user@company-name.com)</label>
+                    </div>
+                    <div class="btn-wrapper">
+                        <div class="mdc-touch-target-wrapper">
+                            <button id="btnGenerate" class="mdc-button mdc-button--raised">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">Generate QR Code</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="instruction">
+                    This TOTP generator is compatible with
+                    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=zh_TW&gl=US&pli=1"
+                        target="_blank">Google Authenticator (Google Play)</a>.
+                    Scan the generated QR code with Google Authenticator app in order to save your secret code in your
+                    mobile device.
                 </div>
-            </form>
-            <div class="instruction">
-                This TOTP generator is compatible with
-                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=zh_TW&gl=US&pli=1"
-                    target="_blank">Google Authenticator (Google Play)</a>.
-                Scan the generated QR code with Google Authenticator app in order to save your secret code in your
-                mobile device.
+                <br/>
             </div>
         </div>
     </main>

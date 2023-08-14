@@ -1,4 +1,4 @@
-go.sum
+.vs/
 .vscode/
 libtotp.dll
 libtotp.a

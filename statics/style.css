@@ -15,6 +15,7 @@ body {
     width: 100%;
     min-height: 100vh;
     min-height: 100svh;
+    overflow: hidden;
 }
 
 .mdc-top-app-bar {
@@ -23,15 +24,20 @@ body {
 }
 
 .main-wrapper {
+    width: 100%;
+    overflow: auto;
+}
+
+.break600w{
+    width: 100%;
     max-width: 500px;
     height: calc(100vh - 64px);
     height: calc(100svh - 64px);
     margin: auto;
-    overflow: auto;
 }
 
 @media screen and (max-width: 600px) {
-    .main-wrapper {
+    .break600w {
         max-width: 100%;
         width: 100%;
         height: calc(100vh - 56px);
@@ -55,7 +61,7 @@ body {
 }
 
 .instruction {
-    width: calc(100% - 32px) !important;
+    width: calc(100% - 32px);
     font-family: var(--mdc-typography-subtitle1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
     font-size: 1.25rem;
     color: dimgrey;
