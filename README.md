@@ -1,5 +1,5 @@
 # bbljtotp
- [A TOTP Generator Web App Built with Golang Gorilla Mux Package](https://localhost:8080
+https://localhost:8080
 
 A TOTP Verifier App Utilizing github.com/pquerna/otp/totp Package
 
