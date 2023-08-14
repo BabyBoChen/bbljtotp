@@ -26,6 +26,7 @@ func main() {
 	r := mux.NewRouter()
 	r.PathPrefix("/statics/").Handler(http.FileServer(http.Dir(".")))
 	r.HandleFunc("/generate", generate).Methods("POST")
+	r.HandleFunc("/generateApi", generateApi).Methods("GET")
 	r.HandleFunc("/verify", verify).Methods("GET")
 	r.HandleFunc("/test", test).Methods("GET")
 	r.HandleFunc("/verifyUrl", verifyUrl).Methods("GET")
@@ -86,6 +87,18 @@ func generate(w http.ResponseWriter, r *http.Request) {
 		Secret:  secret,
 		DataURI: dataURI,
 	})
+}
+
+// return json => (string)secret
+func generateApi(w http.ResponseWriter, r *http.Request) {
+	queryVals := r.URL.Query()
+	email := queryVals.Get("email")
+	t := utils.DateTimeString()
+	data := []byte(t + ":" + email)
+	secret := base32.StdEncoding.EncodeToString(data)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(secret)
 }
 
 // return json => true || false
