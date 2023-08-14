@@ -1,4 +1,4 @@
-# bbljtotp
+# BBLJ TOTP
 https://bblj-totp.onrender.com/
 
 A TOTP Verifier App Utilizing github.com/pquerna/otp/totp Package
