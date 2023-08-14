@@ -10,6 +10,7 @@ import (
 	"text/template"
 
 	"github.com/bblj/totp/models"
+	"github.com/bblj/totp/utils"
 	qrcode "github.com/skip2/go-qrcode"
 
 	"encoding/base32"
@@ -26,6 +27,8 @@ func main() {
 	r.PathPrefix("/statics/").Handler(http.FileServer(http.Dir(".")))
 	r.HandleFunc("/generate", generate).Methods("POST")
 	r.HandleFunc("/verify", verify).Methods("GET")
+	r.HandleFunc("/test", test).Methods("GET")
+	r.HandleFunc("/verifyUrl", verifyUrl).Methods("GET")
 	r.HandleFunc("/", index)
 	fmt.Printf("http://localhost:%s", config.Port)
 	http.ListenAndServe(":"+config.Port, r)
@@ -34,7 +37,7 @@ func main() {
 func readConfig() *models.Config {
 	var config models.Config = models.Config{
 		Port:   "8080",
-		Secret: "HELLO",
+		Github: "",
 	}
 	jsonFile, err := os.Open("config.json")
 	fmt.Println(err)
@@ -49,14 +52,19 @@ func readConfig() *models.Config {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("./views/index.html"))
-	tmpl.Execute(w, nil)
+	tmpl.Execute(w, struct {
+		Github string
+	}{
+		Github: config.Github,
+	})
 }
 
 func generate(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(5242880)
 	issuer := r.Form.Get("Issuer")
 	email := r.Form.Get("Email")
-	data := []byte(config.Secret + ":" + email)
+	t := utils.DateTimeString()
+	data := []byte(t + ":" + email)
 	secret := base32.StdEncoding.EncodeToString(data)
 	totpUrl := fmt.Sprintf("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, email, secret, issuer)
 	png, err := qrcode.Encode(totpUrl, qrcode.Medium, 256)
@@ -80,6 +88,23 @@ func generate(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// return json => true || false
 func verify(w http.ResponseWriter, r *http.Request) {
+	queryVals := r.URL.Query()
+	secret := queryVals.Get("secret")
+	passcode := queryVals.Get("totp")
+	isValid := utils.Verify(secret, passcode)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(isValid)
+}
 
+func test(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./views/test.html"))
+	tmpl.Execute(w, nil)
+}
+
+func verifyUrl(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./views/verifyUrl.html"))
+	tmpl.Execute(w, nil)
 }
