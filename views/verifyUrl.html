@@ -13,7 +13,7 @@
         src="/statics/libs/material-components-web/unpkg.com_material-components-web@14.0.0_dist_material-components-web.min.js"></script>
     <link rel="stylesheet" href="/statics/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    
+
     <link rel="apple-touch-icon" sizes="180x180" href="/statics/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/statics/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/statics/favicon-16x16.png">
@@ -23,21 +23,18 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-config" content="/statics/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-    
-    <style>
-        .qrcode-wrapper {
-            width: calc(100% - 32px) !important;
-            text-align: center;
-            margin: 15px 15px 0px 15px !important;
-        }
 
+    <style>
         .mdc-text-field {
             width: calc(100% - 32px) !important;
-            margin: 15px 15px 0px 15px !important;
+            margin: 30px 15px 15px 15px !important;
         }
 
-        .instruction{
-            padding-left: 0px
+        #btnVerify {
+            width: calc(100% - 32px) !important;
+            height: 3.25rem;
+            font-size: 1.25rem;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -53,8 +50,7 @@
                         arrow_back
                     </button>
                 </a>
-
-                <span class="mdc-top-app-bar__title">TOTP QR Code</span>
+                <span class="mdc-top-app-bar__title">Verify URL</span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
 
@@ -63,29 +59,14 @@
     </header>
     <main class="mdc-top-app-bar--fixed-adjust">
         <div class="main-wrapper">
-            <div class="qrcode-wrapper">
-                <img src="{{.DataURI}}" />
+
+            <br />
+            <br />
+
+            <div class="instruction">
+                Verify users' TOTP with the following URL and with proper query parameters:
             </div>
-            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
-                data-mdc-auto-init="MDCTextField">
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__notch">
-                        <span id="lblSecret" class="mdc-floating-label">Secret</span>
-                    </span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <span class="mdc-text-field__resizer">
-                    <textarea class="mdc-text-field__input" rows="2" cols="20" aria-label="Label"
-                        aria-labelledby="lblSecret" name="Secret" readonly>{{.Secret}}</textarea>
-                </span>
-            </label>
-            <ol class="instruction">
-                <li>For user, scan this QR code with Google Authenticator app.</li>
-                <li>For company administrator, save the Secret into your database in order to verify user's TOTP later.
-                </li>
-                <li>Verify user's TOTP using this api url:</li>
-            </ol>
+
             <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
                 data-mdc-auto-init="MDCTextField">
                 <span class="mdc-notched-outline">
@@ -93,13 +74,30 @@
                     <span class="mdc-notched-outline__trailing"></span>
                 </span>
                 <span class="mdc-text-field__resizer">
-                    <textarea class="mdc-text-field__input" rows="4" cols="20" aria-label="Label"
-                        aria-labelledby="lblApiUrl" name="ApiUrl" readonly></textarea>
+                    <textarea name="URL" 
+                        class="mdc-text-field__input" 
+                        rows="2" 
+                        cols="20" 
+                        aria-label="Label"
+                        aria-labelledby="lblURL" 
+                        readonly></textarea>
                 </span>
             </label>
-        </div>
-    </main>
 
+            <div class="btn-wrapper">
+                <div class="mdc-touch-target-wrapper">
+                    <button id="btnVerify" 
+                        class="mdc-button mdc-button--raised"
+                        onclick="copyUrl()">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Copy URL</span>
+                    </button>
+                </div>
+            </div>
+
+            </form>
+
+    </main>
     <script>
         window.addEventListener("DOMContentLoaded", function () {
             mdcAutoInit();
@@ -107,7 +105,6 @@
         });
         function mdcAutoInit() {
             mdc.autoInit();
-            //new MDCTopAppBar(document.querySelector('.mdc-top-app-bar'));
         }
         function generateVerifyUrl() {
             let domain = window.location.hostname;
@@ -116,11 +113,20 @@
                 domain += ":" + port;
             }
             /** @type {HTMLTextAreaElement} */
-            let txtSecret = document.querySelector("textarea[name='Secret']");
-            let secret = encodeURIComponent(txtSecret.value).replace(/\./g, '%2E');
+            let txtURL = document.querySelector("textarea[name='URL']");
+            txtURL.value = `https://${domain}/verify?secret=\${secret}&totp=\${6-digits-passcode}`;
+        }
+        function copyUrl(){
             /** @type {HTMLTextAreaElement} */
-            let apiUrl = document.querySelector("textarea[name='ApiUrl']");
-            apiUrl.value = `https://${domain}/verify?secret=${secret}&totp={6 digits TOTP}`;
+            let txtURL = document.querySelector("textarea[name='URL']");
+            const listener = function(ev) {
+                ev.preventDefault();
+                ev.clipboardData.setData('text/html', txtURL.value);
+                ev.clipboardData.setData('text/plain', txtURL.value);
+            };
+            document.addEventListener('copy', listener);
+            document.execCommand('copy');
+            document.removeEventListener('copy', listener);
         }
     </script>
 </body>
