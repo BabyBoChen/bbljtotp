@@ -107,11 +107,11 @@ func generateApi(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	key := struct {
-		secret string
-		qrcode string
+		Secret string
+		Qrcode string
 	}{
-		secret: secret,
-		qrcode: dataURI,
+		Secret: secret,
+		Qrcode: dataURI,
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
