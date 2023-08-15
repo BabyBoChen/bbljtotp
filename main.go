@@ -27,6 +27,7 @@ func main() {
 	r.PathPrefix("/statics/").Handler(http.FileServer(http.Dir(".")))
 	r.HandleFunc("/generate", generate).Methods("POST")
 	r.HandleFunc("/generateApi", generateApi).Methods("GET")
+	r.HandleFunc("/generateTOTP", generateTOTP).Methods("GET")
 	r.HandleFunc("/verify", verify).Methods("GET")
 	r.HandleFunc("/test", test).Methods("GET")
 	r.HandleFunc("/verifyUrl", verifyUrl).Methods("GET")
@@ -110,6 +111,11 @@ func verify(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(isValid)
+}
+
+func generateTOTP(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./views/generateTOTP.html"))
+	tmpl.Execute(w, nil)
 }
 
 func test(w http.ResponseWriter, r *http.Request) {

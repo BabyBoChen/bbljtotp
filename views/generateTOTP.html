@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BBLJ TOTP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+        href="/statics/libs/material-components-web/unpkg.com_material-components-web@14.0.0_dist_material-components-web.min.css"
+        rel="stylesheet">
+    <script
+        src="/statics/libs/material-components-web/unpkg.com_material-components-web@14.0.0_dist_material-components-web.min.js"></script>
+    <link rel="stylesheet" href="/statics/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/statics/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/statics/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/statics/favicon-16x16.png">
+    <link rel="manifest" href="/statics/site.webmanifest">
+    <link rel="mask-icon" href="/statics/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/statics/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="/statics/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        .mdc-text-field {
+            width: calc(100% - 32px) !important;
+            margin: 15px 15px 0px 15px !important;
+        }
+
+        .signal-light{
+            width: calc(100% - 32px) !important;
+            text-align: right;
+            margin: 0px 15px 0px 15px !important;
+        }
+
+        .hide{
+            opacity: 0;
+            visibility: hidden;
+            transition: all .1s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="mdc-top-app-bar" data-mdc-auto-init="MDCTopAppBar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="/">
+                    <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button mdc-button"
+                        aria-label="Open navigation menu">
+                        <span class="mdc-button__ripple"></span>
+                        arrow_back
+                    </button>
+                </a>
+                <span class="mdc-top-app-bar__title">Generate TOTP</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+
+            </section>
+        </div>
+    </header>
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="main-wrapper">
+            <form class="break600w" action="/verify" method="get">
+
+                <br />
+                <br />
+
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
+                    data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblSecret" class="mdc-floating-label">Secret</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <span class="mdc-text-field__resizer">
+                        <textarea class="mdc-text-field__input" rows="2" cols="20" aria-label="Label"
+                            aria-labelledby="lblSecret" name="secret" required></textarea>
+                    </span>
+                </label>
+
+                <div class="hint-wrapper">
+                    <label class="lbl-hint">(E.g. JBSWY3DPEHPK3PXP)</label>
+                </div>
+                <div class="signal-light">
+                    <span class="material-icons hide" 
+                        id="iconSignal"
+                        style="color:red;font-size: 18px;">
+                        browse_gallery
+                    </span>
+                </div>
+                <label id="txtPasscode" class="mdc-text-field mdc-text-field--outlined">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblPasscode" class="mdc-floating-label">Passcode</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input name="totp" type="text" class="mdc-text-field__input" aria-labelledby="lblPasscode"
+                        maxlength="6" readonly>
+                </label>
+                <div class="instruction">
+                    Please make sure that your device's current datetime is synced with internet datetime. Being in
+                    different time zone will not affect the accuracy of this passcode.
+                </div>
+                <br />
+            </form>
+        </div>
+
+    </main>
+    <script src="/statics/wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        /** @type {HTMLInputElement} */
+        const txtSecret = document.querySelector("textarea[name='secret']");
+        const txtPasscode = new mdc.textField.MDCTextField(document.getElementById("txtPasscode"));
+        const iconSignal = document.getElementById("iconSignal");
+        window.addEventListener("DOMContentLoaded", async function () {
+            mdcAutoInit();
+            await loadWASM();
+            setInterval(updatePasscode, 1000);
+        });
+        function mdcAutoInit() {
+            mdc.autoInit();
+        }
+        async function loadWASM() {
+            await WebAssembly.instantiateStreaming(fetch("/statics/totpWASM.wasm"), go.importObject)
+                .then((result) => {
+                    go.run(result.instance);
+                });
+        }
+        function updatePasscode(){
+            try {
+                if (txtSecret.value) {
+                    txtPasscode.value = generateTOTP(txtSecret.value);
+                }
+            } catch (ex) {
+                console.log(ex);
+                txtPasscode.value = "------";
+            }
+            iconSignal.classList.remove("hide");
+            setTimeout(function(){
+                iconSignal.classList.add("hide");
+            }, 400);
+        }
+    </script>
+</body>
+
+</html>

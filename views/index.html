@@ -160,6 +160,9 @@
     <div id="drawer" class="drawer hidden">
         <br />
         <div class="drawer-item-wrapper">
+            <div class="drawer-item v-center" onclick="generateTOTP()">Generate TOTP</div>
+        </div>
+        <div class="drawer-item-wrapper">
             <div class="drawer-item v-center" onclick="testTOTP()">Test TOTP</div>
         </div>
         <div class="drawer-item-wrapper">
@@ -193,6 +196,9 @@
         }
         function closeDrawer() {
             drawer.classList.add("hidden");
+        }
+        function generateTOTP(){
+            window.location.href = "/generateTOTP";
         }
         function testTOTP() {
             window.location.href = "/test";
