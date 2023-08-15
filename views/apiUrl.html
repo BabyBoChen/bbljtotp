@@ -30,7 +30,14 @@
             margin: 30px 15px 15px 15px !important;
         }
 
-        #btnVerify {
+        #btnCopyGenUrl {
+            width: calc(100% - 32px) !important;
+            height: 3.25rem;
+            font-size: 1.25rem;
+            margin-top: 15px;
+        }
+
+        #btnCopyUrl {
             width: calc(100% - 32px) !important;
             height: 3.25rem;
             font-size: 1.25rem;
@@ -50,7 +57,7 @@
                         arrow_back
                     </button>
                 </a>
-                <span class="mdc-top-app-bar__title">Verify URL</span>
+                <span class="mdc-top-app-bar__title">API URL</span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
 
@@ -63,7 +70,36 @@
                 <br />
                 <br />
                 <div class="instruction">
-                    Verify users' TOTP with the following URL and with proper query parameters:
+                    Generate TOTP secret with the following URL and with proper parameters. The return value is a json object { secret: string, qrcode: string (e.g. "data:image/png;base64,... ") }.
+                </div>
+
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
+                    data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <span class="mdc-text-field__resizer">
+                        <textarea name="genURL" 
+                            class="mdc-text-field__input" 
+                            rows="2" 
+                            cols="20" 
+                            aria-label="Label"
+                            readonly></textarea>
+                    </span>
+                </label>
+
+                <div class="btn-wrapper">
+                    <div class="mdc-touch-target-wrapper">
+                        <button id="btnCopyGenUrl" class="mdc-button mdc-button--raised" onclick="copyGenUrl()">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Copy URL</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instruction">
+                    Verify users' TOTP with the following URL and with proper query parameters. The return value is a json bool value true or false.
                 </div>
 
                 <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
@@ -80,7 +116,7 @@
 
                 <div class="btn-wrapper">
                     <div class="mdc-touch-target-wrapper">
-                        <button id="btnVerify" class="mdc-button mdc-button--raised" onclick="copyUrl()">
+                        <button id="btnCopyUrl" class="mdc-button mdc-button--raised" onclick="copyUrl()">
                             <span class="mdc-button__ripple"></span>
                             <span class="mdc-button__label">Copy URL</span>
                         </button>
@@ -107,6 +143,20 @@
             /** @type {HTMLTextAreaElement} */
             let txtURL = document.querySelector("textarea[name='URL']");
             txtURL.value = `https://${domain}/verify?secret=\${secret}&totp=\${6-digits-passcode}`;
+            let txtGenURL = document.querySelector("textarea[name='genURL']");
+            txtGenURL.value = `https://${domain}/generateApi?issuer=\${issuer}&email=\${email}`;
+        }
+        function copyGenUrl() {
+            /** @type {HTMLTextAreaElement} */
+            let txtGenURL = document.querySelector("textarea[name='genURL']");
+            const listener = function (ev) {
+                ev.preventDefault();
+                ev.clipboardData.setData('text/html', txtGenURL.value);
+                ev.clipboardData.setData('text/plain', txtGenURL.value);
+            };
+            document.addEventListener('copy', listener);
+            document.execCommand('copy');
+            document.removeEventListener('copy', listener);
         }
         function copyUrl() {
             /** @type {HTMLTextAreaElement} */

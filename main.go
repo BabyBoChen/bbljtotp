@@ -30,7 +30,7 @@ func main() {
 	r.HandleFunc("/generateTOTP", generateTOTP).Methods("GET")
 	r.HandleFunc("/verify", verify).Methods("GET")
 	r.HandleFunc("/test", test).Methods("GET")
-	r.HandleFunc("/verifyUrl", verifyUrl).Methods("GET")
+	r.HandleFunc("/apiUrl", apiUrl).Methods("GET")
 	r.HandleFunc("/", index)
 	fmt.Printf("http://localhost:%s", config.Port)
 	http.ListenAndServe(":"+config.Port, r)
@@ -90,16 +90,32 @@ func generate(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// return json => (string)secret
+// return json => { secret: string, qrcode: string (e.g. "data:image/png;base64,... ")}
 func generateApi(w http.ResponseWriter, r *http.Request) {
 	queryVals := r.URL.Query()
+	issuer := queryVals.Get("issuer")
 	email := queryVals.Get("email")
 	t := utils.DateTimeString()
 	data := []byte(t + ":" + email)
 	secret := base32.StdEncoding.EncodeToString(data)
+	totpUrl := fmt.Sprintf("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, email, secret, issuer)
+	png, err := qrcode.Encode(totpUrl, qrcode.Medium, 256)
+	dataURI := ""
+	if err == nil {
+		dataURI = "data:image/png;base64," + base64.StdEncoding.EncodeToString([]byte(png))
+	} else {
+		fmt.Println(err)
+	}
+	key := struct {
+		secret string
+		qrcode string
+	}{
+		secret: secret,
+		qrcode: dataURI,
+	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(secret)
+	json.NewEncoder(w).Encode(key)
 }
 
 // return json => true || false
@@ -123,7 +139,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
-func verifyUrl(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./views/verifyUrl.html"))
+func apiUrl(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./views/apiUrl.html"))
 	tmpl.Execute(w, nil)
 }
