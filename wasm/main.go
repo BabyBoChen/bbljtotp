@@ -8,6 +8,12 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
+func main() {
+	js.Global().Set("generateTOTP", generateTOTP)
+	fmt.Println("totpWASM loaded")
+	<-make(chan bool)
+}
+
 var generateTOTP js.Func = js.FuncOf(_generateTOTP)
 
 func _generateTOTP(this js.Value, args []js.Value) interface{} {
@@ -44,14 +50,8 @@ func _generateTOTP(this js.Value, args []js.Value) interface{} {
 	if !hasError {
 		return passcode_js
 	} else {
-		return js.Error{
-			Value: js.ValueOf(err),
-		}
+		errorConstructor := js.Global().Get("Error")
+		errorObject := errorConstructor.New(err)
+		return errorObject
 	}
-}
-
-func main() {
-	js.Global().Set("generateTOTP", generateTOTP)
-	fmt.Println("totpWASM loaded")
-	<-make(chan bool)
 }
