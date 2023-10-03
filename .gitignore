@@ -3,3 +3,4 @@
 libtotp.dll
 libtotp.a
 *.exe
+bin/
