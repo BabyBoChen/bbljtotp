@@ -1,19 +1,20 @@
 package main
 
 import (
+	"encoding/base32"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"text/template"
 
 	"github.com/bblj/totp/models"
+	"github.com/bblj/totp/secrets"
 	"github.com/bblj/totp/utils"
 	qrcode "github.com/skip2/go-qrcode"
-
-	"encoding/base32"
 
 	"github.com/gorilla/mux"
 )
@@ -38,8 +39,9 @@ func main() {
 
 func readConfig() *models.Config {
 	var config models.Config = models.Config{
-		Port:   "8080",
-		Github: "",
+		Port:      "8080",
+		Github:    "",
+		SecretKey: secrets.SECRET_KEY,
 	}
 	jsonFile, err := os.Open("config.json")
 	fmt.Println(err)
@@ -63,12 +65,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func generate(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(5242880)
+	secret := r.Form.Get("Secret")
+	if len(secret) == 0 {
+		t := utils.DateTimeString()
+		data := []byte(config.SecretKey + ":" + t)
+		secret = base32.StdEncoding.EncodeToString(data)
+	}
+	digit := r.Form.Get("Digit")
+	period := r.Form.Get("Period")
 	issuer := r.Form.Get("Issuer")
-	email := r.Form.Get("Email")
-	t := utils.DateTimeString()
-	data := []byte(t + ":" + email)
-	secret := base32.StdEncoding.EncodeToString(data)
-	totpUrl := fmt.Sprintf("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, email, secret, issuer)
+	username := r.Form.Get("Username")
+	totpUrl := fmt.Sprintf("otpauth://totp/%s:%s?issuer=%s&secret=%s&algorithm=SHA1&digits=%s&period=%s", issuer, username, issuer, url.QueryEscape(secret), digit, period)
 	png, err := qrcode.Encode(totpUrl, qrcode.Medium, 256)
 	dataURI := ""
 	if err == nil {
@@ -78,27 +85,41 @@ func generate(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl := template.Must(template.ParseFiles("./views/generate.html"))
 	tmpl.Execute(w, struct {
-		Issuer  string
-		Email   string
-		Secret  string
-		DataURI string
+		Secret   string
+		Digit    string
+		Period   string
+		Issuer   string
+		Username string
+		DataURI  string
+		TotpUrl  string
 	}{
-		Issuer:  issuer,
-		Email:   email,
-		Secret:  secret,
-		DataURI: dataURI,
+		Secret:   secret,
+		Digit:    digit,
+		Period:   period,
+		Issuer:   issuer,
+		Username: username,
+		DataURI:  dataURI,
+		TotpUrl:  totpUrl,
 	})
 }
 
 // return json => { secret: string, qrcode: string (e.g. "data:image/png;base64,... ")}
 func generateApi(w http.ResponseWriter, r *http.Request) {
 	queryVals := r.URL.Query()
+
+	secret := queryVals.Get("secret")
+	if len(secret) == 0 {
+		t := utils.DateTimeString()
+		data := []byte(config.SecretKey + ":" + t)
+		secret = base32.StdEncoding.EncodeToString(data)
+	}
+	//digit := queryVals.Get("digit")
+	digit := "6"
+	//period := queryVals.Get("period")
+	period := "30"
 	issuer := queryVals.Get("issuer")
-	email := queryVals.Get("email")
-	t := utils.DateTimeString()
-	data := []byte(t + ":" + email)
-	secret := base32.StdEncoding.EncodeToString(data)
-	totpUrl := fmt.Sprintf("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, email, secret, issuer)
+	username := queryVals.Get("username")
+	totpUrl := fmt.Sprintf("otpauth://totp/%s:%s?issuer=%s&secret=%s&algorithm=SHA1&digits=%s&period=%s", issuer, username, issuer, url.QueryEscape(secret), digit, period)
 	png, err := qrcode.Encode(totpUrl, qrcode.Medium, 256)
 	dataURI := ""
 	if err == nil {

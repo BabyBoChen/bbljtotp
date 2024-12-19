@@ -100,12 +100,53 @@
             </section>
         </div>
     </header>
+    
     <main class="mdc-top-app-bar--fixed-adjust">
         <div class="main-wrapper" onclick="closeDrawer()">
             <div class="break600w">
                 <form id="frmTotp" class="form" action="/generate" method="post" enctype="multipart/form-data">
                     <br />
                     <br />
+
+                    <label id="txtSecret" class="mdc-text-field mdc-text-field--outlined"
+                        data-mdc-auto-init="MDCTextField">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span id="lblSecret" class="mdc-floating-label">Secret</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input name="Secret" type="text" class="mdc-text-field__input" aria-labelledby="lblSecret">
+                    </label>
+
+                    <label id="txtDigit" class="mdc-text-field mdc-text-field--outlined"
+                        data-mdc-auto-init="MDCTextField">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span id="lblDigit" class="mdc-floating-label">Digit</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input name="Digit" type="number" class="mdc-text-field__input" aria-labelledby="lblDigit" value="6"
+                            min="6" required readonly>
+                    </label>
+
+                    <label id="txtPeriod" class="mdc-text-field mdc-text-field--outlined"
+                        data-mdc-auto-init="MDCTextField">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span id="lblPeriod" class="mdc-floating-label">Period(sec)</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input name="Period" type="number" class="mdc-text-field__input" aria-labelledby="lblPeriod" value="30"
+                            min="6" required readonly>
+                    </label>
+
+
                     <label id="txtIssue" class="mdc-text-field mdc-text-field--outlined"
                         data-mdc-auto-init="MDCTextField">
                         <span class="mdc-notched-outline">
@@ -118,24 +159,21 @@
                         <input name="Issuer" type="text" class="mdc-text-field__input" aria-labelledby="lblIssuer"
                             required maxlength="100">
                     </label>
-                    <div class="hint-wrapper">
-                        <label class="lbl-hint">(E.g. company name)</label>
-                    </div>
-                    <label id="txtEmail" class="mdc-text-field mdc-text-field--outlined"
+                    
+                    <label id="txtUsername" class="mdc-text-field mdc-text-field--outlined"
                         data-mdc-auto-init="MDCTextField">
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <span class="mdc-notched-outline__notch">
-                                <span id="lblEmail" class="mdc-floating-label">Email</span>
+                                <span id="lblUsername" class="mdc-floating-label">Username</span>
                             </span>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
-                        <input name="Email" type="email" class="mdc-text-field__input" aria-labelledby="lblEmail"
+                        <input name="Username" type="text" class="mdc-text-field__input" aria-labelledby="lblUsername"
                             required>
                     </label>
-                    <div class="hint-wrapper">
-                        <label class="lbl-hint">(E.g. user@company-name.com)</label>
-                    </div>
+                    
+
                     <div class="btn-wrapper">
                         <div class="mdc-touch-target-wrapper">
                             <button id="btnGenerate" class="mdc-button mdc-button--raised">

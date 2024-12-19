@@ -4,3 +4,5 @@ libtotp.dll
 libtotp.a
 *.exe
 bin/
+docker_run.sh
+secret.go

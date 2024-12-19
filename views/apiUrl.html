@@ -74,7 +74,7 @@
                 </div>
 
                 <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label"
-                    data-mdc-auto-init="MDCTextField">
+                    data-mdc-auto-init="MDCTextField" style="height:8em;">
                     <span class="mdc-notched-outline">
                         <span class="mdc-notched-outline__leading"></span>
                         <span class="mdc-notched-outline__trailing"></span>
@@ -144,7 +144,7 @@
             let txtURL = document.querySelector("textarea[name='URL']");
             txtURL.value = `https://${domain}/verify?secret=\${secret}&totp=\${6-digits-passcode}`;
             let txtGenURL = document.querySelector("textarea[name='genURL']");
-            txtGenURL.value = `https://${domain}/generateApi?issuer=\${issuer}&email=\${email}`;
+            txtGenURL.value = `https://${domain}/generateApi?issuer=\${issuer}&username=\${username}&secret=\${secret (optional)}`;
         }
         function copyGenUrl() {
             /** @type {HTMLTextAreaElement} */

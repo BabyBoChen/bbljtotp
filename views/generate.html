@@ -68,7 +68,8 @@
                 <div class="qrcode-wrapper">
                     <img src="{{.DataURI}}" />
                 </div>
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
+                
+                <label class="mdc-text-field mdc-text-field--outlined"
                     data-mdc-auto-init="MDCTextField">
                     <span class="mdc-notched-outline">
                         <span class="mdc-notched-outline__leading"></span>
@@ -77,9 +78,21 @@
                         </span>
                         <span class="mdc-notched-outline__trailing"></span>
                     </span>
+                    <input type="text" class="mdc-text-field__input" aria-labelledby="lblSecret" value="{{.Secret}}" readonly/>
+                </label>
+
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea"
+                    data-mdc-auto-init="MDCTextField">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="lblTotpUrl" class="mdc-floating-label">OTP URI</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
                     <span class="mdc-text-field__resizer">
                         <textarea class="mdc-text-field__input" rows="2" cols="20" aria-label="Label"
-                            aria-labelledby="lblSecret" name="Secret" readonly>{{.Secret}}</textarea>
+                            aria-labelledby="lblTotpUrl" name="TotpUrl" readonly>{{.TotpUrl}}</textarea>
                     </span>
                 </label>
                 <ol class="instruction">
@@ -102,6 +115,8 @@
         </div>
     </main>
 
+    <input type="hidden" name="Secret" id="txtSecret" value="{{.Secret}}" readonly>
+
     <script>
         window.addEventListener("DOMContentLoaded", function () {
             mdcAutoInit();
@@ -118,7 +133,7 @@
                 domain += ":" + port;
             }
             /** @type {HTMLTextAreaElement} */
-            let txtSecret = document.querySelector("textarea[name='Secret']");
+            let txtSecret = document.querySelector("#txtSecret");
             let secret = encodeURIComponent(txtSecret.value).replace(/\./g, '%2E');
             /** @type {HTMLTextAreaElement} */
             let apiUrl = document.querySelector("textarea[name='ApiUrl']");
